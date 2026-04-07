@@ -319,7 +319,8 @@ function showRev(id,text){document.getElementById('txt-'+id).textContent=text;va
 function showErr(id,msg){var el=document.getElementById('err-'+id);el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},4000);}
 async function gemini(prompt){
   if(!GKEY)throw new Error('画面上部にGeminiキーを入力して「接続する」を押してください');
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+GKEY;
+  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash
+:generateContent?key='+GKEY;
   var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.92,maxOutputTokens:900}})});
   var d=await res.json();
   if(!res.ok)throw new Error((d.error&&d.error.message)||'エラーが発生しました');
