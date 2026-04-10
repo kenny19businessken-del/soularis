@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -8,122 +9,452 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --gold: #c9a84c; --gold2: #e8d08a; --gold3: #f5e9b8;
-  --dark: #08070f; --dark2: #0f0d1a; --dark3: #181428;
-  --ink: #1e1830; --text: #ede6d8; --muted: #8a8090; --accent: #6b3fa0;
+  --gold: #c9a84c;
+  --gold2: #e8d08a;
+  --gold3: #f5e9b8;
+  --dark: #08070f;
+  --dark2: #0f0d1a;
+  --dark3: #181428;
+  --ink: #1e1830;
+  --text: #ede6d8;
+  --muted: #8a8090;
+  --accent: #6b3fa0;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
+
+- { margin:0; padding:0; box-sizing:border-box; }
+
 html { scroll-behavior: smooth; }
-body { background: var(--dark); color: var(--text); font-family: 'Noto Serif JP', serif; font-weight: 300; min-height: 100vh; overflow-x: hidden; cursor: none; }
-#cursor { position: fixed; pointer-events: none; z-index: 9999; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; transform: translate(-50%,-50%); mix-blend-mode: screen; }
-#cursor-ring { position: fixed; pointer-events: none; z-index: 9998; width: 36px; height: 36px; border: 1px solid rgba(201,168,76,0.4); border-radius: 50%; transform: translate(-50%,-50%); transition: transform 0.15s ease-out; }
+
+body {
+background: var(–dark);
+color: var(–text);
+font-family: ‘Noto Serif JP’, serif;
+font-weight: 300;
+min-height: 100vh;
+overflow-x: hidden;
+cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+position: fixed; pointer-events: none; z-index: 9999;
+width: 8px; height: 8px;
+background: var(–gold);
+border-radius: 50%;
+transform: translate(-50%,-50%);
+transition: transform 0.1s, width 0.3s, height 0.3s, opacity 0.3s;
+mix-blend-mode: screen;
+}
+#cursor-ring {
+position: fixed; pointer-events: none; z-index: 9998;
+width: 36px; height: 36px;
+border: 1px solid rgba(201,168,76,0.4);
+border-radius: 50%;
+transform: translate(-50%,-50%);
+transition: transform 0.15s ease-out, width 0.4s, height 0.4s;
+}
+
+/* ── CANVAS BACKGROUND ── */
 #cosmos { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
-.api-bar { position: relative; z-index: 100; background: rgba(15,13,26,0.9); border-bottom: 1px solid rgba(201,168,76,0.15); padding: 12px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; backdrop-filter: blur(10px); }
-.api-bar label { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.2em; white-space: nowrap; }
-.api-bar input { flex: 1; min-width: 180px; background: rgba(255,255,255,0.03); border: 1px solid rgba(201,168,76,0.2); color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 0.8rem; outline: none; border-radius: 1px; }
-.api-bar input:focus { border-color: var(--gold); }
-.api-bar button { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.4); color: var(--gold); padding: 8px 18px; font-family: 'Cinzel Decorative', serif; font-size: 0.7rem; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; }
+
+/* ── NOISE OVERLAY ── */
+body::after {
+content:’’; position:fixed; inset:0; z-index:1; pointer-events:none;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.04’/%3E%3C/svg%3E”);
+opacity: 0.35;
+}
+
+/* ── API SETUP ── */
+.api-bar {
+position: relative; z-index: 100;
+background: rgba(15,13,26,0.9);
+border-bottom: 1px solid rgba(201,168,76,0.15);
+padding: 12px 24px;
+display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+backdrop-filter: blur(10px);
+}
+.api-bar label { font-size: 0.72rem; color: var(–gold); letter-spacing: 0.2em; white-space: nowrap; }
+.api-bar input {
+flex: 1; min-width: 180px;
+background: rgba(255,255,255,0.03);
+border: 1px solid rgba(201,168,76,0.2);
+color: var(–text); padding: 8px 12px;
+font-family: monospace; font-size: 0.8rem;
+outline: none; border-radius: 1px;
+}
+.api-bar input:focus { border-color: var(–gold); }
+.api-bar button {
+background: rgba(201,168,76,0.1);
+border: 1px solid rgba(201,168,76,0.4);
+color: var(–gold); padding: 8px 18px;
+font-family: ‘Cinzel Decorative’, serif; font-size: 0.7rem;
+letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s;
+}
 .api-bar button:hover { background: rgba(201,168,76,0.2); }
 .api-dot { width:8px; height:8px; border-radius:50%; background:#555; flex-shrink:0; transition: background 0.3s; }
 .api-dot.on { background: #4dff91; box-shadow: 0 0 8px #4dff91; }
-header { position: relative; z-index: 10; text-align: center; padding: 80px 20px 60px; }
-.site-eyebrow { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.85rem; color: var(--muted); letter-spacing: 0.5em; margin-bottom: 20px; animation: fadeUp 1.2s ease both; }
-.site-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(2.4rem, 7vw, 5rem); color: var(--gold); letter-spacing: 0.15em; line-height: 1; animation: fadeUp 1.2s 0.2s ease both; position: relative; display: inline-block; }
-.site-title::before, .site-title::after { content: '✦'; font-size: 0.4em; vertical-align: middle; margin: 0 0.5em; opacity: 0.6; }
-.site-tagline { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic; color: var(--muted); letter-spacing: 0.3em; margin-top: 16px; animation: fadeUp 1.2s 0.4s ease both; }
-.header-line { width: 120px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 30px auto 0; animation: fadeUp 1.2s 0.5s ease both; }
-@keyframes fadeUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
-nav { position: relative; z-index: 10; display: flex; justify-content: center; gap: 4px; padding: 0 20px 40px; flex-wrap: wrap; }
-.nav-btn { background: transparent; border: none; border-bottom: 1px solid rgba(201,168,76,0.15); color: var(--muted); padding: 12px 24px; font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 0.82rem; cursor: pointer; transition: all 0.4s; letter-spacing: 0.2em; position: relative; }
-.nav-btn::after { content:''; position:absolute; bottom:-1px; left:50%; right:50%; height:1px; background: var(--gold); transition: left 0.3s, right 0.3s; }
+
+/* ── HEADER ── */
+header {
+position: relative; z-index: 10;
+text-align: center;
+padding: 80px 20px 60px;
+}
+.site-eyebrow {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic; font-size: 0.85rem;
+color: var(–muted); letter-spacing: 0.5em;
+margin-bottom: 20px;
+animation: fadeUp 1.2s ease both;
+}
+.site-title {
+font-family: ‘Cinzel Decorative’, serif;
+font-size: clamp(2.4rem, 7vw, 5rem);
+color: var(–gold);
+letter-spacing: 0.15em;
+line-height: 1;
+animation: fadeUp 1.2s 0.2s ease both;
+position: relative; display: inline-block;
+}
+.site-title::before, .site-title::after {
+content: ‘✦’;
+font-size: 0.4em;
+vertical-align: middle;
+margin: 0 0.5em;
+opacity: 0.6;
+}
+.site-tagline {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1rem; font-style: italic;
+color: var(–muted); letter-spacing: 0.3em;
+margin-top: 16px;
+animation: fadeUp 1.2s 0.4s ease both;
+}
+.header-line {
+width: 120px; height: 1px;
+background: linear-gradient(90deg, transparent, var(–gold), transparent);
+margin: 30px auto 0;
+animation: fadeUp 1.2s 0.5s ease both;
+}
+
+@keyframes fadeUp {
+from { opacity:0; transform: translateY(24px); }
+to   { opacity:1; transform: translateY(0); }
+}
+
+/* ── NAV ── */
+nav {
+position: relative; z-index: 10;
+display: flex; justify-content: center;
+gap: 4px; padding: 0 20px 40px;
+flex-wrap: wrap;
+}
+.nav-btn {
+background: transparent;
+border: none;
+border-bottom: 1px solid rgba(201,168,76,0.15);
+color: var(–muted);
+padding: 12px 24px;
+font-family: ‘Noto Serif JP’, serif;
+font-weight: 300; font-size: 0.82rem;
+cursor: pointer; transition: all 0.4s;
+letter-spacing: 0.2em; position: relative;
+}
+.nav-btn::after {
+content:’’; position:absolute; bottom:-1px; left:50%; right:50%;
+height:1px; background: var(–gold);
+transition: left 0.3s, right 0.3s;
+}
 .nav-btn:hover::after, .nav-btn.active::after { left:0; right:0; }
-.nav-btn:hover, .nav-btn.active { color: var(--gold2); }
-.wrap { position: relative; z-index: 10; max-width: 820px; margin: 0 auto; padding: 0 20px 60px; }
+.nav-btn:hover, .nav-btn.active { color: var(–gold2); }
+
+/* ── CONTAINER ── */
+.wrap {
+position: relative; z-index: 10;
+max-width: 820px; margin: 0 auto; padding: 0 20px 60px;
+}
+
+/* ── SECTION ── */
 .section { display: none; animation: fadeUp 0.7s ease both; }
 .section.active { display: block; }
-.panel { background: linear-gradient(160deg, rgba(24,20,40,0.97), rgba(15,13,26,0.97)); border: 1px solid rgba(201,168,76,0.18); padding: 48px 44px; margin-bottom: 24px; position: relative; }
-.panel::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at top, rgba(107,63,160,0.08), transparent 60%); pointer-events:none; }
-.panel-corner { position:absolute; width:20px; height:20px; border-color: var(--gold); border-style: solid; opacity:0.4; }
+
+/* ── PANEL ── */
+.panel {
+background: linear-gradient(160deg, rgba(24,20,40,0.97), rgba(15,13,26,0.97));
+border: 1px solid rgba(201,168,76,0.18);
+padding: 48px 44px;
+margin-bottom: 24px;
+position: relative;
+}
+.panel::before {
+content:’’;
+position:absolute; inset:0;
+background: radial-gradient(ellipse at top, rgba(107,63,160,0.08), transparent 60%);
+pointer-events:none;
+}
+.panel-corner {
+position:absolute; width:20px; height:20px;
+border-color: var(–gold); border-style: solid; opacity:0.4;
+}
 .panel-corner.tl { top:8px; left:8px; border-width:1px 0 0 1px; }
 .panel-corner.tr { top:8px; right:8px; border-width:1px 1px 0 0; }
 .panel-corner.bl { bottom:8px; left:8px; border-width:0 0 1px 1px; }
 .panel-corner.br { bottom:8px; right:8px; border-width:0 1px 1px 0; }
-.panel-title { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; color: var(--gold); letter-spacing: 0.25em; text-align: center; margin-bottom: 32px; }
-.panel-intro { text-align: center; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.95rem; color: var(--muted); line-height: 2; margin-bottom: 28px; }
+
+.panel-title {
+font-family: ‘Cinzel Decorative’, serif;
+font-size: 0.9rem; color: var(–gold);
+letter-spacing: 0.25em; text-align: center;
+margin-bottom: 32px;
+}
+.panel-intro {
+text-align: center;
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic; font-size: 0.95rem;
+color: var(–muted); line-height: 2;
+margin-bottom: 28px;
+}
+
+/* ── FORM ── */
 .field { margin-bottom: 22px; }
-.field-label { display: block; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.25em; margin-bottom: 8px; }
-.field input, .field select { width: 100%; background: rgba(255,255,255,0.03); border: 0; border-bottom: 1px solid rgba(201,168,76,0.2); color: var(--text); padding: 12px 4px; font-family: 'Noto Serif JP', serif; font-weight:300; font-size: 0.92rem; outline: none; transition: border-color 0.3s; border-radius: 0; }
-.field input:focus, .field select:focus { border-bottom-color: var(--gold); }
-.field select option { background: var(--dark2); }
-.soul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); gap: 8px; margin: 24px 0; }
-.soul-item { border: 1px solid rgba(201,168,76,0.1); padding: 16px 8px; text-align: center; cursor: pointer; transition: all 0.35s; position: relative; overflow: hidden; }
-.soul-item::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at center, rgba(201,168,76,0.08), transparent); opacity:0; transition: opacity 0.35s; }
+.field-label {
+display: block; font-size: 0.72rem;
+color: var(–muted); letter-spacing: 0.25em; margin-bottom: 8px;
+}
+.field input, .field select {
+width: 100%;
+background: rgba(255,255,255,0.03);
+border: 0; border-bottom: 1px solid rgba(201,168,76,0.2);
+color: var(–text); padding: 12px 4px;
+font-family: ‘Noto Serif JP’, serif; font-weight:300; font-size: 0.92rem;
+outline: none; transition: border-color 0.3s;
+border-radius: 0;
+}
+.field input:focus, .field select:focus { border-bottom-color: var(–gold); }
+.field select option { background: var(–dark2); }
+
+/* ── SOUL GRID (zodiac) ── */
+.soul-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(110px,1fr));
+gap: 8px; margin: 24px 0;
+}
+.soul-item {
+border: 1px solid rgba(201,168,76,0.1);
+padding: 16px 8px; text-align: center;
+cursor: pointer; transition: all 0.35s;
+position: relative; overflow: hidden;
+}
+.soul-item::before {
+content:’’; position:absolute; inset:0;
+background: radial-gradient(circle at center, rgba(201,168,76,0.08), transparent);
+opacity:0; transition: opacity 0.35s;
+}
 .soul-item:hover::before, .soul-item.chosen::before { opacity:1; }
 .soul-item:hover, .soul-item.chosen { border-color: rgba(201,168,76,0.5); }
 .soul-glyph { font-size: 1.5rem; display:block; margin-bottom:6px; }
-.soul-name { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
-.soul-item.chosen .soul-name { color: var(--gold); }
-.card-spread { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px,1fr)); gap: 8px; margin: 20px 0; }
-.spread-card { aspect-ratio: 2/3.2; border: 1px solid rgba(201,168,76,0.15); cursor: pointer; transition: all 0.35s; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; position: relative; overflow: hidden; background: linear-gradient(160deg, rgba(30,24,48,0.9), rgba(15,13,26,0.9)); }
-.spread-card::before { content: '✦'; position:absolute; font-size: 3rem; opacity:0.04; color: var(--gold); transition: opacity 0.3s; }
+.soul-name { font-size: 0.7rem; color: var(–muted); letter-spacing: 0.1em; }
+.soul-item.chosen .soul-name { color: var(–gold); }
+
+/* ── CARD SPREAD ── */
+.card-spread {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(72px,1fr));
+gap: 8px; margin: 20px 0;
+}
+.spread-card {
+aspect-ratio: 2/3.2;
+border: 1px solid rgba(201,168,76,0.15);
+cursor: pointer; transition: all 0.35s;
+display: flex; align-items: center; justify-content: center;
+font-size: 1.4rem; position: relative; overflow: hidden;
+background: linear-gradient(160deg, rgba(30,24,48,0.9), rgba(15,13,26,0.9));
+}
+.spread-card::before {
+content: ‘✦’; position:absolute;
+font-size: 3rem; opacity:0.04; color: var(–gold);
+transition: opacity 0.3s;
+}
 .spread-card:hover { border-color: rgba(201,168,76,0.5); transform: translateY(-4px); }
-.spread-card.chosen { border-color: var(--gold); box-shadow: 0 0 20px rgba(201,168,76,0.15); }
-.spread-info { text-align:center; font-size: 0.72rem; color: var(--muted); margin: 8px 0; letter-spacing: 0.1em; }
-.soul-btn { display: block; width: 100%; background: transparent; border: 1px solid rgba(201,168,76,0.35); color: var(--gold2); padding: 18px; font-family: 'Cinzel Decorative', serif; font-size: 0.75rem; letter-spacing: 0.3em; cursor: pointer; transition: all 0.4s; margin-top: 12px; position: relative; overflow: hidden; }
-.soul-btn:hover { border-color: var(--gold); box-shadow: 0 0 30px rgba(201,168,76,0.1); }
+.spread-card:hover::before { opacity: 0.08; }
+.spread-card.chosen {
+border-color: var(–gold);
+box-shadow: 0 0 20px rgba(201,168,76,0.15);
+}
+.spread-info {
+text-align:center; font-size: 0.72rem;
+color: var(–muted); margin: 8px 0; letter-spacing: 0.1em;
+}
+
+/* ── BUTTON ── */
+.soul-btn {
+display: block; width: 100%;
+background: transparent;
+border: 1px solid rgba(201,168,76,0.35);
+color: var(–gold2);
+padding: 18px;
+font-family: ‘Cinzel Decorative’, serif;
+font-size: 0.75rem; letter-spacing: 0.3em;
+cursor: pointer; transition: all 0.4s;
+margin-top: 12px; position: relative; overflow: hidden;
+}
+.soul-btn::before {
+content:’’; position:absolute; inset:0;
+background: linear-gradient(135deg, rgba(201,168,76,0.05), rgba(107,63,160,0.05));
+opacity:0; transition: opacity 0.4s;
+}
+.soul-btn:hover::before { opacity:1; }
+.soul-btn:hover { border-color: var(–gold); box-shadow: 0 0 30px rgba(201,168,76,0.1); }
 .soul-btn:disabled { opacity:0.35; cursor:not-allowed; }
-.premium-btn { display: block; width: 100%; background: linear-gradient(135deg, rgba(139,105,20,0.8), rgba(201,168,76,0.9)); border: none; color: var(--dark); padding: 20px; font-family: 'Cinzel Decorative', serif; font-size: 0.75rem; letter-spacing: 0.2em; cursor: pointer; transition: all 0.4s; margin-top: 16px; font-weight: 700; }
+
+.premium-btn {
+display: block; width: 100%;
+background: linear-gradient(135deg, rgba(139,105,20,0.8), rgba(201,168,76,0.9));
+border: none;
+color: var(–dark);
+padding: 20px;
+font-family: ‘Cinzel Decorative’, serif;
+font-size: 0.75rem; letter-spacing: 0.2em;
+cursor: pointer; transition: all 0.4s;
+margin-top: 16px; font-weight: 700;
+}
 .premium-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.3); }
+
+/* ── LOADING ── */
 .veil { display:none; text-align:center; padding: 48px 0; }
 .veil.on { display:block; animation: fadeUp 0.5s ease both; }
-.veil-orb { width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 20px; background: conic-gradient(from 0deg, var(--gold), var(--accent), var(--dark2), var(--gold)); animation: spin 2s linear infinite; box-shadow: 0 0 40px rgba(201,168,76,0.2); }
+.veil-orb {
+width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 20px;
+background: conic-gradient(from 0deg, var(–gold), var(–accent), var(–dark2), var(–gold));
+animation: spin 2s linear infinite;
+box-shadow: 0 0 40px rgba(201,168,76,0.2);
+}
 @keyframes spin { to { transform: rotate(360deg); } }
-.veil-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.95rem; color: var(--muted); letter-spacing: 0.15em; animation: breathe 2s ease-in-out infinite alternate; }
+.veil-text {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic; font-size: 0.95rem;
+color: var(–muted); letter-spacing: 0.15em;
+animation: breathe 2s ease-in-out infinite alternate;
+}
 @keyframes breathe { from { opacity:0.5; } to { opacity:1; } }
-.revelation { display:none; margin-top: 28px; border-top: 1px solid rgba(201,168,76,0.1); padding-top: 32px; }
+
+/* ── RESULT ── */
+.revelation {
+display:none; margin-top: 28px;
+border-top: 1px solid rgba(201,168,76,0.1);
+padding-top: 32px;
+}
 .revelation.show { display:block; animation: fadeUp 0.8s ease both; }
-.revelation-text { font-family: 'Cormorant Garamond', serif; font-size: 1.08rem; line-height: 2.3; color: #f0e8d8; white-space: pre-wrap; }
-.premium-block { margin-top: 36px; border: 1px solid rgba(201,168,76,0.25); padding: 32px; text-align: center; background: linear-gradient(160deg, rgba(139,105,20,0.06), rgba(201,168,76,0.03)); position: relative; }
-.premium-block::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
-.premium-eyebrow { font-family: 'Cormorant Garamond', serif; font-style:italic; font-size:0.85rem; color: var(--muted); letter-spacing: 0.3em; margin-bottom: 8px; }
-.premium-title { font-family: 'Cinzel Decorative', serif; font-size: 0.85rem; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 20px; }
+.revelation-text {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1.08rem; line-height: 2.3;
+color: #f0e8d8; white-space: pre-wrap;
+}
+
+/* ── PREMIUM BLOCK ── */
+.premium-block {
+margin-top: 36px;
+border: 1px solid rgba(201,168,76,0.25);
+padding: 32px;
+text-align: center;
+background: linear-gradient(160deg, rgba(139,105,20,0.06), rgba(201,168,76,0.03));
+position: relative;
+}
+.premium-block::before {
+content:’’; position:absolute; top:0; left:0; right:0; height:1px;
+background: linear-gradient(90deg, transparent, var(–gold), transparent);
+}
+.premium-eyebrow {
+font-family: ‘Cormorant Garamond’, serif;
+font-style:italic; font-size:0.85rem;
+color: var(–muted); letter-spacing: 0.3em; margin-bottom: 8px;
+}
+.premium-title {
+font-family: ‘Cinzel Decorative’, serif;
+font-size: 0.85rem; color: var(–gold);
+letter-spacing: 0.2em; margin-bottom: 20px;
+}
 .premium-list { list-style:none; margin: 0 0 20px; text-align:left; }
-.premium-list li { padding: 7px 0; font-size: 0.82rem; color: var(--muted); border-bottom: 1px solid rgba(255,255,255,0.04); }
-.premium-list li::before { content: '◈  '; color: var(--gold); font-size:0.65rem; }
-.premium-price { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold2); margin: 16px 0; }
+.premium-list li {
+padding: 7px 0; font-size: 0.82rem; color: var(–muted);
+border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.premium-list li::before { content: ’◈  ’; color: var(–gold); font-size:0.65rem; }
+.premium-price {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 2rem; color: var(–gold2); margin: 16px 0;
+}
 .premium-price small { font-size:1rem; }
-.err { background: rgba(160,40,40,0.08); border: 1px solid rgba(160,40,40,0.25); color: #ff9a9a; padding: 12px 16px; font-size: 0.82rem; margin-top: 12px; display: none; }
-.err.on { display:block; }
+
+/* ── ERROR ── */
+.err {
+background: rgba(160,40,40,0.08);
+border: 1px solid rgba(160,40,40,0.25);
+color: #ff9a9a; padding: 12px 16px;
+font-size: 0.82rem; margin-top: 12px; display: none;
+}
+.err.on { display:block; animation: fadeUp 0.3s ease; }
+
+/* ── TWO COL ── */
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-.col-label { font-family: 'Cormorant Garamond', serif; font-style:italic; font-size:0.82rem; color: var(--gold); text-align:center; letter-spacing:0.2em; margin-bottom:14px; }
-footer { position:relative; z-index:10; text-align:center; padding: 48px 20px; border-top: 1px solid rgba(201,168,76,0.08); color: var(--muted); font-size: 0.72rem; letter-spacing: 0.15em; line-height: 2.4; }
-.footer-logo { font-family: 'Cinzel Decorative', serif; font-size: 1rem; color: rgba(201,168,76,0.4); letter-spacing: 0.3em; margin-bottom: 12px; }
-@media(max-width:600px){ .panel { padding: 32px 20px; } .two-col { grid-template-columns:1fr; } .soul-grid { grid-template-columns: repeat(3,1fr); } .card-spread { grid-template-columns: repeat(5,1fr); } }
+.col-label {
+font-family: ‘Cormorant Garamond’, serif;
+font-style:italic; font-size:0.82rem;
+color: var(–gold); text-align:center;
+letter-spacing:0.2em; margin-bottom:14px;
+}
+
+/* ── FOOTER ── */
+footer {
+position:relative; z-index:10;
+text-align:center; padding: 48px 20px;
+border-top: 1px solid rgba(201,168,76,0.08);
+color: var(–muted); font-size: 0.72rem;
+letter-spacing: 0.15em; line-height: 2.4;
+}
+.footer-logo {
+font-family: ‘Cinzel Decorative’, serif;
+font-size: 1rem; color: rgba(201,168,76,0.4);
+letter-spacing: 0.3em; margin-bottom: 12px;
+}
+
+@media(max-width:600px){
+.panel { padding: 32px 20px; }
+.two-col { grid-template-columns:1fr; }
+.soul-grid { grid-template-columns: repeat(3,1fr); }
+.card-spread { grid-template-columns: repeat(5,1fr); }
+}
 </style>
+
 </head>
 <body>
+
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 <canvas id="cosmos"></canvas>
-<div class="api-bar">
-  <label>GEMINI KEY</label>
-  <input type="password" id="api-input" placeholder="AIzaSy...">
-  <button onclick="saveKey()">接続する</button>
-  <div class="api-dot" id="api-dot"></div>
-</div>
+
+<!-- HEADER -->
+
 <header>
   <div class="site-eyebrow">宇宙の叡智があなたに語りかける</div>
   <div class="site-title">SOULARIS</div>
   <div class="site-tagline">Soul Reading from the Universe</div>
   <div class="header-line"></div>
 </header>
+
+<!-- NAV -->
+
 <nav>
   <button class="nav-btn active" onclick="go('star',this)">星のリーディング</button>
   <button class="nav-btn" onclick="go('cards',this)">カードスプレッド</button>
   <button class="nav-btn" onclick="go('soul',this)">ソウルナンバー</button>
   <button class="nav-btn" onclick="go('twin',this)">ツインソウル診断</button>
 </nav>
+
 <div class="wrap">
+
+  <!-- ★ STAR READING (旧:星座運勢) -->
+
   <div class="section active" id="section-star">
     <div class="panel">
       <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
@@ -164,6 +495,9 @@ footer { position:relative; z-index:10; text-align:center; padding: 48px 20px; b
       </div>
     </div>
   </div>
+
+  <!-- ★ CARD SPREAD (旧:タロット) -->
+
   <div class="section" id="section-cards">
     <div class="panel">
       <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
@@ -198,6 +532,9 @@ footer { position:relative; z-index:10; text-align:center; padding: 48px 20px; b
       </div>
     </div>
   </div>
+
+  <!-- ★ SOUL NUMBER (旧:数秘術) -->
+
   <div class="section" id="section-soul">
     <div class="panel">
       <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
@@ -226,6 +563,9 @@ footer { position:relative; z-index:10; text-align:center; padding: 48px 20px; b
       </div>
     </div>
   </div>
+
+  <!-- ★ TWIN SOUL (旧:恋愛相性) -->
+
   <div class="section" id="section-twin">
     <div class="panel">
       <div class="panel-corner tl"></div><div class="panel-corner tr"></div>
@@ -274,90 +614,248 @@ footer { position:relative; z-index:10; text-align:center; padding: 48px 20px; b
       </div>
     </div>
   </div>
-</div>
+
+</div><!-- /wrap -->
+
 <footer>
   <div class="footer-logo">SOULARIS</div>
   <div>宇宙の叡智と魂の対話のためのスピリチュアルプラットフォーム</div>
   <div style="margin-top:8px;opacity:0.5">© 2025 SOULARIS  |  本サービスはスピリチュアルなエンターテインメントです</div>
 </footer>
+
 <script>
-var cur=document.getElementById('cursor');
-var ring=document.getElementById('cursor-ring');
-document.addEventListener('mousemove',function(e){
-  cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
-  setTimeout(function(){ring.style.left=e.clientX+'px';ring.style.top=e.clientY+'px';},80);
+// ── CURSOR ──
+var cur = document.getElementById('cursor');
+var ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', function(e){
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+  setTimeout(function(){ ring.style.left = e.clientX+'px'; ring.style.top = e.clientY+'px'; }, 80);
 });
+
+// ── COSMOS CANVAS ──
 (function(){
-  var cv=document.getElementById('cosmos');
-  var ctx=cv.getContext('2d');
-  var W,H,stars=[],nebulas=[];
-  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  for(var i=0;i<200;i++){stars.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+0.2,a:Math.random(),da:(Math.random()-0.5)*0.006,speed:Math.random()*0.00003});}
-  for(var j=0;j<4;j++){nebulas.push({x:Math.random()*0.8+0.1,y:Math.random()*0.8+0.1,r:Math.random()*300+150,c:j%2===0?[107,63,160]:[40,20,80],a:Math.random()*0.06+0.02});}
-  function draw(){
+  var cv = document.getElementById('cosmos');
+  var ctx = cv.getContext('2d');
+  var W, H, stars = [], nebulas = [];
+
+  function resize(){
+    W = cv.width = window.innerWidth;
+    H = cv.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for(var i=0;i<200;i++){
+    stars.push({
+      x: Math.random(), y: Math.random(),
+      r: Math.random()*1.4+0.2,
+      a: Math.random(), da: (Math.random()-0.5)*0.006,
+      speed: Math.random()*0.00003
+    });
+  }
+  for(var j=0;j<4;j++){
+    nebulas.push({
+      x: Math.random()*0.8+0.1, y: Math.random()*0.8+0.1,
+      r: Math.random()*300+150,
+      c: j%2===0 ? [107,63,160] : [40,20,80],
+      a: Math.random()*0.06+0.02
+    });
+  }
+
+  function draw(t){
     ctx.clearRect(0,0,W,H);
-    nebulas.forEach(function(n){var g=ctx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r);g.addColorStop(0,'rgba('+n.c[0]+','+n.c[1]+','+n.c[2]+','+n.a+')');g.addColorStop(1,'rgba('+n.c[0]+','+n.c[1]+','+n.c[2]+',0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(n.x*W,n.y*H,n.r,0,Math.PI*2);ctx.fill();});
-    stars.forEach(function(s){s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;s.y-=s.speed;if(s.y<0)s.y=1;ctx.globalAlpha=Math.max(0,Math.min(1,s.a));ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);ctx.fill();});
-    ctx.globalAlpha=1;requestAnimationFrame(draw);
+    // nebula
+    nebulas.forEach(function(n){
+      var g = ctx.createRadialGradient(n.x*W,n.y*H,0,n.x*W,n.y*H,n.r);
+      g.addColorStop(0,'rgba('+n.c[0]+','+n.c[1]+','+n.c[2]+','+n.a+')');
+      g.addColorStop(1,'rgba('+n.c[0]+','+n.c[1]+','+n.c[2]+',0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(n.x*W,n.y*H,n.r,0,Math.PI*2);
+      ctx.fill();
+    });
+    // stars
+    stars.forEach(function(s){
+      s.a += s.da;
+      if(s.a>1||s.a<0) s.da*=-1;
+      s.y -= s.speed;
+      if(s.y<0) s.y=1;
+      ctx.globalAlpha = Math.max(0,Math.min(1,s.a));
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
 })();
-var GKEY=localStorage.getItem('soularis_key')||'';
-if(GKEY){document.getElementById('api-input').value=GKEY;document.getElementById('api-dot').classList.add('on');}
-function saveKey(){var k=document.getElementById('api-input').value.trim();if(!k){alert('キーを入力してください');return;}GKEY=k;localStorage.setItem('soularis_key',k);document.getElementById('api-dot').classList.add('on');}
-function go(name,btn){document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});document.getElementById('section-'+name).classList.add('active');btn.classList.add('active');}
-var chosenStar='';
-function pick(el,name){document.querySelectorAll('.soul-item').forEach(function(i){i.classList.remove('chosen');});el.classList.add('chosen');chosenStar=name;}
-var glyphs=['🌟','🌙','☀️','⚡','🔥','💧','🌊','🌿','💎','⚔️','⚖️','🏺','🌹','🦋','🔮','👁️','🌀','⭐','🌸','🎭','🦅','🌺','💫','🌈'];
-var chosenCards=[];
-(function(){var g=document.getElementById('card-spread');glyphs.forEach(function(e,i){var d=document.createElement('div');d.className='spread-card';d.innerHTML='<span style="opacity:0.15;font-size:0.9rem">✦</span>';d.dataset.i=i;d.dataset.e=e;d.onclick=function(){toggleCard(this);};g.appendChild(d);});})();
-function toggleCard(el){var idx=el.dataset.i;if(el.classList.contains('chosen')){el.classList.remove('chosen');el.innerHTML='<span style="opacity:0.15;font-size:0.9rem">✦</span>';chosenCards=chosenCards.filter(function(x){return x!==idx;});}else{if(chosenCards.length>=3)return;el.classList.add('chosen');el.innerHTML=el.dataset.e;chosenCards.push(idx);}document.getElementById('spread-info').textContent='カードを3枚選んでください（'+chosenCards.length+' / 3）';}
-function showVeil(id){document.getElementById('veil-'+id).classList.add('on');}
-function hideVeil(id){document.getElementById('veil-'+id).classList.remove('on');}
-function showRev(id,text){document.getElementById('txt-'+id).textContent=text;var r=document.getElementById('rev-'+id);r.classList.add('show');r.scrollIntoView({behavior:'smooth',block:'nearest'});}
-function showErr(id,msg){var el=document.getElementById('err-'+id);el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},4000);}
+
+// ── API KEY ──
+var GKEY = 'AIzaSyCrpJJLpnecxWPcFJ9WIiq5V9wCpg40Vsc';
+
+
+
+
+// ── NAV ──
+function go(name, btn){
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('section-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── STAR PICK (zodiac) ──
+var chosenStar = '';
+function pick(el, name){
+  document.querySelectorAll('.soul-item').forEach(function(i){ i.classList.remove('chosen'); });
+  el.classList.add('chosen');
+  chosenStar = name;
+}
+
+// ── CARD SPREAD ──
+var glyphs = ['🌟','🌙','☀️','⚡','🔥','💧','🌊','🌿','💎','⚔️','⚖️','🏺','🌹','🦋','🔮','👁️','🌀','⭐','🌸','🎭','🦅','🌺','💫','🌈'];
+var chosenCards = [];
+(function(){
+  var g = document.getElementById('card-spread');
+  glyphs.forEach(function(e,i){
+    var d = document.createElement('div');
+    d.className = 'spread-card';
+    d.innerHTML = '<span style="opacity:0.15;font-size:0.9rem">✦</span>';
+    d.dataset.i = i; d.dataset.e = e;
+    d.onclick = function(){ toggleCard(this); };
+    g.appendChild(d);
+  });
+})();
+function toggleCard(el){
+  var idx = el.dataset.i;
+  if(el.classList.contains('chosen')){
+    el.classList.remove('chosen');
+    el.innerHTML = '<span style="opacity:0.15;font-size:0.9rem">✦</span>';
+    chosenCards = chosenCards.filter(function(x){ return x!==idx; });
+  } else {
+    if(chosenCards.length>=3) return;
+    el.classList.add('chosen');
+    el.innerHTML = el.dataset.e;
+    chosenCards.push(idx);
+  }
+  document.getElementById('spread-info').textContent = 'カードを3枚選んでください（'+chosenCards.length+' / 3）';
+}
+
+// ── HELPERS ──
+function showVeil(id){ document.getElementById('veil-'+id).classList.add('on'); }
+function hideVeil(id){ document.getElementById('veil-'+id).classList.remove('on'); }
+function showRev(id, text){
+  document.getElementById('txt-'+id).textContent = text;
+  var r = document.getElementById('rev-'+id);
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function showErr(id, msg){
+  var el = document.getElementById('err-'+id);
+  el.textContent = msg; el.classList.add('on');
+  setTimeout(function(){ el.classList.remove('on'); }, 4000);
+}
+
+// ── GEMINI ──
 async function gemini(prompt){
-  if(!GKEY)throw new Error('画面上部にGeminiキーを入力して「接続する」を押してください');
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash
-:generateContent?key='+GKEY;
-  var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.92,maxOutputTokens:900}})});
-  var d=await res.json();
-  if(!res.ok)throw new Error((d.error&&d.error.message)||'エラーが発生しました');
-  if(!d.candidates||!d.candidates[0])throw new Error('メッセージを取得できませんでした');
+  if(!GKEY) throw new Error('画面上部にGeminiキーを入力して「接続する」を押してください');
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+GKEY;
+  var res = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      contents:[{parts:[{text:prompt}]}],
+      generationConfig:{temperature:0.92, maxOutputTokens:900}
+    })
+  });
+  var d = await res.json();
+  if(!res.ok) throw new Error((d.error&&d.error.message)||'エラーが発生しました');
+  if(!d.candidates||!d.candidates[0]) throw new Error('メッセージを取得できませんでした');
   return d.candidates[0].content.parts[0].text;
 }
+
+// ── STAR READING ──
 async function doStar(){
-  if(!chosenStar){showErr('star','星座を選択してください');return;}
-  var btn=document.getElementById('btn-star');btn.disabled=true;
+  if(!chosenStar){ showErr('star','星座を選択してください'); return; }
+  var btn = document.getElementById('btn-star'); btn.disabled=true;
   document.getElementById('rev-star').classList.remove('show');
   showVeil('star');
-  try{var today=new Date().toLocaleDateString('ja-JP');var t=await gemini('あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n'+today+'に'+chosenStar+'の魂を持つ人へ、宇宙からのメッセージをお伝えください。\n\n「占い」「AI」「運勢」という言葉は一切使わず、\n「エネルギー」「魂」「宇宙」「光」「振動」「意識」などスピリチュアルな言葉で表現してください。\n\n◈ 今日のエネルギー\n（今日の宇宙エネルギーの流れを詩的に2〜3文）\n\n◈ 愛のエネルギー\n（愛と繋がりについてのメッセージ）\n\n◈ 豊かさの流れ\n（豊かさと創造についてのメッセージ）\n\n◈ 魂の成長\n（今日の学びと成長についてのメッセージ）\n\nラッキーカラー：○○　◈　共鳴する数字：○\n\n✦ 宇宙からひとこと ✦\n（深く心に響く詩的な言葉）\n\n✦や◈などの記号を使い、深く神秘的な文体で書いてください。');showRev('star',t);}
-  catch(e){showErr('star',e.message);}
-  finally{hideVeil('star');btn.disabled=false;}
+  try {
+    var today = new Date().toLocaleDateString('ja-JP');
+    var t = await gemini(
+'あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n'+
+today+'に'+chosenStar+'の魂を持つ人へ、宇宙からのメッセージをお伝えください。\n\n'+
+'「占い」「AI」「運勢」という言葉は一切使わず、\n'+
+'「エネルギー」「魂」「宇宙」「光」「振動」「意識」などスピリチュアルな言葉で表現してください。\n\n'+
+'◈ 今日のエネルギー\n（今日の宇宙エネルギーの流れを詩的に2〜3文）\n\n'+
+'◈ 愛のエネルギー\n（愛と繋がりについてのメッセージ）\n\n'+
+'◈ 豊かさの流れ\n（豊かさと創造についてのメッセージ）\n\n'+
+'◈ 魂の成長\n（今日の学びと成長についてのメッセージ）\n\n'+
+'ラッキーカラー：○○　◈　共鳴する数字：○\n\n'+
+'✦ 宇宙からひとこと ✦\n（深く心に響く詩的な言葉）\n\n'+
+'✦や◈などの記号を使い、深く神秘的な文体で書いてください。'
+    );
+    showRev('star', t);
+  } catch(e){ showErr('star', e.message); }
+  finally { hideVeil('star'); btn.disabled=false; }
 }
+
+// ── CARD SPREAD ──
 async function doCards(){
-  if(chosenCards.length<3){showErr('cards','カードを3枚選んでください');return;}
-  var theme=document.getElementById('card-theme').value;
-  var cards=chosenCards.map(function(i){return glyphs[i];});
-  var btn=document.getElementById('btn-cards');btn.disabled=true;
+  if(chosenCards.length<3){ showErr('cards','カードを3枚選んでください'); return; }
+  var theme = document.getElementById('card-theme').value;
+  var cards = chosenCards.map(function(i){ return glyphs[i]; });
+  var btn = document.getElementById('btn-cards'); btn.disabled=true;
   document.getElementById('rev-cards').classList.remove('show');
   showVeil('cards');
-  try{var t=await gemini('あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\nテーマ「'+theme+'」について、選ばれた3枚のカード（'+cards.join('、')+'）のエネルギーを読み解いてください。\n\n「占い」「タロット」「AI」という言葉は一切使わず、\n「エネルギー」「魂」「光」「宇宙」「振動」などスピリチュアルな言葉で表現してください。\n\n◈ 過去のエネルギー\n（過去から持ち越したエネルギーのメッセージ）\n\n◈ 現在のエネルギー\n（今この瞬間に必要な気づきのメッセージ）\n\n◈ 未来のエネルギー\n（これから開かれていく可能性のメッセージ）\n\n✦ 宇宙からの統合メッセージ ✦\n（3つのエネルギーを統合した深い洞察を詩的に）\n\n✦や◈などの記号を使い、深く神秘的な文体で書いてください。');showRev('cards',t);}
-  catch(e){showErr('cards',e.message);}
-  finally{hideVeil('cards');btn.disabled=false;}
+  try {
+    var t = await gemini(
+'あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n'+
+'テーマ「'+theme+'」について、選ばれた3枚のカード（'+cards.join('、')+'）のエネルギーを読み解いてください。\n\n'+
+'「占い」「タロット」「AI」という言葉は一切使わず、\n'+
+'「エネルギー」「魂」「光」「宇宙」「振動」などスピリチュアルな言葉で表現してください。\n\n'+
+'◈ 過去のエネルギー（最初のカード）\n（過去から持ち越したエネルギーのメッセージ）\n\n'+
+'◈ 現在のエネルギー（2枚目のカード）\n（今この瞬間に必要な気づきのメッセージ）\n\n'+
+'◈ 未来のエネルギー（3枚目のカード）\n（これから開かれていく可能性のメッセージ）\n\n'+
+'✦ 宇宙からの統合メッセージ ✦\n（3つのエネルギーを統合した深い洞察を詩的に）\n\n'+
+'✦や◈などの記号を使い、深く神秘的な文体で書いてください。'
+    );
+    showRev('cards', t);
+  } catch(e){ showErr('cards', e.message); }
+  finally { hideVeil('cards'); btn.disabled=false; }
 }
+
+// ── SOUL NUMBER ──
 async function doSoul(){
-  var name=document.getElementById('soul-name').value.trim();
-  var birth=document.getElementById('soul-birth').value;
-  if(!name||!birth){showErr('soul','お名前と生年月日を入力してください');return;}
-  var btn=document.getElementById('btn-soul');btn.disabled=true;
+  var name = document.getElementById('soul-name').value.trim();
+  var birth = document.getElementById('soul-birth').value;
+  if(!name||!birth){ showErr('soul','お名前と生年月日を入力してください'); return; }
+  var btn = document.getElementById('btn-soul'); btn.disabled=true;
   document.getElementById('rev-soul').classList.remove('show');
   showVeil('soul');
-  try{var t=await gemini('あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n名前：'+name+'\n生年月日：'+birth+'\n\nこの方の魂の青写真を読み解いてください。\n「占い」「AI」という言葉は一切使わず、\n「ソウルナンバー」「魂の設計図」「光」「使命」などスピリチュアルな言葉で表現してください。\n\n◈ ライフパスエネルギー\n（生年月日から導かれる魂の道と使命を詩的に）\n\n◈ ソウルの本質\n（名前が持つ振動数とその人の魂の本質を）\n\n◈ 今世の贈り物\n（この魂が持つ特別な才能と使命を）\n\n◈ 今年のサイクル\n（現在の個人年エネルギーとそのメッセージを）\n\n✦ あなたの魂へ ✦\n（深く心に響く詩的なメッセージ）\n\n✦や◈などの記号を使い、深く温かい文体で書いてください。');showRev('soul',t);}
-  catch(e){showErr('soul',e.message);}
-  finally{hideVeil('soul');btn.disabled=false;}
+  try {
+    var t = await gemini(
+'あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n'+
+'名前：'+name+'\n生年月日：'+birth+'\n\n'+
+'この方の魂の青写真を読み解いてください。\n'+
+'「占い」「AI」という言葉は一切使わず、\n'+
+'「ソウルナンバー」「魂の設計図」「光」「使命」などスピリチュアルな言葉で表現してください。\n\n'+
+'◈ ライフパスエネルギー\n（生年月日から導かれる魂の道と使命を詩的に）\n\n'+
+'◈ ソウルの本質\n（名前が持つ振動数とその人の魂の本質を）\n\n'+
+'◈ 今世の贈り物\n（この魂が持つ特別な才能と使命を）\n\n'+
+'◈ 今年のサイクル\n（現在の個人年エネルギーとそのメッセージを）\n\n'+
+'✦ あなたの魂へ ✦\n（深く心に響く詩的なメッセージ）\n\n'+
+'✦や◈などの記号を使い、深く温かい文体で書いてください。'
+    );
+    showRev('soul', t);
+  } catch(e){ showErr('soul', e.message); }
+  finally { hideVeil('soul'); btn.disabled=false; }
 }
+
+// ── TWIN SOUL ──
 async function doTwin(){
   var n1=document.getElementById('tw-n1').value.trim();
   var b1=document.getElementById('tw-b1').value;
@@ -365,14 +863,30 @@ async function doTwin(){
   var n2=document.getElementById('tw-n2').value.trim();
   var b2=document.getElementById('tw-b2').value;
   var g2=document.getElementById('tw-g2').value;
-  if(!n1||!b1||!n2||!b2){showErr('twin','すべての項目を入力してください');return;}
-  var btn=document.getElementById('btn-twin');btn.disabled=true;
+  if(!n1||!b1||!n2||!b2){ showErr('twin','すべての項目を入力してください'); return; }
+  var btn = document.getElementById('btn-twin'); btn.disabled=true;
   document.getElementById('rev-twin').classList.remove('show');
   showVeil('twin');
-  try{var t=await gemini('あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n'+n1+'さん（'+g1+'エネルギー、'+b1+'生まれ）と\n'+n2+'さん（'+g2+'エネルギー、'+b2+'生まれ）\nこの二つの魂の縁を読み解いてください。\n\n「占い」「AI」という言葉は一切使わず、\n「ソウルコネクション」「エネルギー」「カルマ」「光」などスピリチュアルな言葉で表現してください。\n\n◈ 魂の共鳴レベル（○○％）\n（二つの魂がどれほど共鳴しているかのメッセージ）\n\n◈ 宇宙が二人を引き合わせた理由\n（前世からの縁と今世での出会いの意味を）\n\n◈ 二つの魂が輝く時\n（二人のエネルギーが最も美しく重なる場面を）\n\n◈ 魂の成長のための課題\n（二人が共に乗り越えるべきテーマと智慧を）\n\n✦ 宇宙から二人へ ✦\n（愛と希望に満ちた詩的なメッセージ）\n\n✦や♡などの記号を使い、深く温かい文体で書いてください。');showRev('twin',t);}
-  catch(e){showErr('twin',e.message);}
-  finally{hideVeil('twin');btn.disabled=false;}
+  try {
+    var t = await gemini(
+'あなたは宇宙の叡智を伝えるスピリチュアルガイドです。\n'+
+n1+'さん（'+g1+'エネルギー、'+b1+'生まれ）と\n'+
+n2+'さん（'+g2+'エネルギー、'+b2+'生まれ）\n'+
+'この二つの魂の縁を読み解いてください。\n\n'+
+'「占い」「AI」という言葉は一切使わず、\n'+
+'「ソウルコネクション」「エネルギー」「カルマ」「光」などスピリチュアルな言葉で表現してください。\n\n'+
+'◈ 魂の共鳴レベル（○○％）\n（二つの魂がどれほど共鳴しているかのメッセージ）\n\n'+
+'◈ 宇宙が二人を引き合わせた理由\n（前世からの縁と今世での出会いの意味を）\n\n'+
+'◈ 二つの魂が輝く時\n（二人のエネルギーが最も美しく重なる場面を）\n\n'+
+'◈ 魂の成長のための課題\n（二人が共に乗り越えるべきテーマと智慧を）\n\n'+
+'✦ 宇宙から二人へ ✦\n（愛と希望に満ちた詩的なメッセージ）\n\n'+
+'✦や♡などの記号を使い、深く温かい文体で書いてください。'
+    );
+    showRev('twin', t);
+  } catch(e){ showErr('twin', e.message); }
+  finally { hideVeil('twin'); btn.disabled=false; }
 }
 </script>
+
 </body>
 </html>
